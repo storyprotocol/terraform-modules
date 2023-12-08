@@ -14,15 +14,15 @@ eks_login() {
 
 create_iam_sa() {
 	# deprecated: Created by TF
-  # Ref: https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html
-  eksctl create iamserviceaccount \
-    --cluster=$CLUSTER_NAME \
-    --namespace=kube-system \
-    --name=aws-load-balancer-controller \
-    --attach-policy-arn=arn:aws:iam::${AWS_ACCOUNT_ID}:policy/AWSLoadBalancerControllerIAMPolicy \
-    --override-existing-serviceaccounts \
-    --region $AWS_REGION \
-    --approve
+	# Ref: https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html
+	eksctl create iamserviceaccount \
+		--cluster=$CLUSTER_NAME \
+		--namespace=kube-system \
+		--name=aws-load-balancer-controller \
+		--attach-policy-arn=arn:aws:iam::${AWS_ACCOUNT_ID}:policy/AWSLoadBalancerControllerIAMPolicy \
+		--override-existing-serviceaccounts \
+		--region $AWS_REGION \
+		--approve
 }
 
 create_aws_sa() {
