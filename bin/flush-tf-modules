@@ -1,0 +1,9 @@
+#!/bin/sh
+
+if [ -z "$TF_MODULES_RESTORE_PATH" ]; then
+	echo '--> Restore path not found. Exiting...' >&2
+	exit 1
+fi
+
+aws s3 rm "$TF_MODULES_RESTORE_PATH"/.terraform.tar.gz
+

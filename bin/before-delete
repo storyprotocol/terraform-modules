@@ -1,0 +1,30 @@
+#!/bin/sh
+eks_login() {
+	local count=0
+	echo '--> Waiting for EKS to be ready...' >&2
+	while [ $count -lt 3 ]; do
+		aws eks update-kubeconfig --name "$CLUSTER_NAME" && kubectl cluster-info
+		if [ $? -eq 0 ]; then
+			break
+		fi
+		sleep 10
+		count=$((count+1))
+	done
+}
+
+delete_k8s_ingress() {
+	kubectl get ing -A | tail -n+2 | awk '{print$1}' | uniq | xargs -I% kubectl delete ns %
+}
+
+main() {
+	export AWS_ACCOUNT_ID=$1; shift
+	export AWS_REGION=$1; export AWS_DEFAULT_REGION=$1; shift
+	export CLUSTER_NAME=$1; shift
+	export VPC_ID=$1; shift
+
+	eks_login
+	delete_k8s_ingress
+}
+
+main "$@"
+
