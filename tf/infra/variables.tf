@@ -12,6 +12,8 @@ variable "params" {
   type = object({
     eks_addons = set(string)
 
+    eks_managed_node_group_default_ami_type = string
+
     eks_managed_node_groups = map(object({
       name           = string
       instance_types = list(string)

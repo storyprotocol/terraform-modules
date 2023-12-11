@@ -14,7 +14,7 @@ locals {
   oidc_provider_url = var.oidc_provider_url
   name_uniq         = "${local.name}-${random_string.secret_suffix.result}"
 
-  k8s_namespace       = local.name
+  k8s_namespace       = var.name
   k8s_sa_name         = "default"
   k8s_sa_policy_names = toset(var.params.sa_policies)
 

@@ -4,6 +4,7 @@
 # automatically. This script handle the removal of those SGs, required
 # to remove the VPC completely.
 delete_sgs() {
+	# TODO:
 	local region aws_account_id sg_id sg_arn
 	for sg_arn in $(echo "$TARGET_SG_ARNS" | tr ',' ' '); do
 		region=$(echo "$sg_arn" | cut -d':' -f4)
@@ -21,9 +22,10 @@ delete_sgs() {
 }
 
 main() {
-	export AWS_ACCOUNT_ID=$1; shift
-	export AWS_REGION=$1; export AWS_DEFAULT_REGION=$1; shift
-	export TARGET_SG_ARNS=$1; shift
+	# export AWS_ACCOUNT_ID=$1; shift
+	# export AWS_REGION=$1; export AWS_DEFAULT_REGION=$1; shift
+	# export TARGET_SG_ARNS=$1; shift
+	export VPC_ID=$1; shift
 	delete_sgs
 }
 

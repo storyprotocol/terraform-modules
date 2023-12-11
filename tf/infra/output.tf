@@ -11,3 +11,4 @@ output "eks" {
 output "vpc_sg_arns" {
   value = data.aws_security_groups.this.arns
 }
+

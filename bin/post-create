@@ -12,22 +12,15 @@ eks_login() {
 	done
 }
 
-create_iam_sa() {
-	# deprecated: Created by TF
-	# Ref: https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html
-	eksctl create iamserviceaccount \
-		--cluster=$CLUSTER_NAME \
-		--namespace=kube-system \
-		--name=aws-load-balancer-controller \
-		--attach-policy-arn=arn:aws:iam::${AWS_ACCOUNT_ID}:policy/AWSLoadBalancerControllerIAMPolicy \
-		--override-existing-serviceaccounts \
-		--region $AWS_REGION \
-		--approve
+obtain_aws_account_id() {
+	aws sts get-caller-identity | jq .Account -r
 }
 
 create_aws_sa() {
+	local aws_account_id
+	aws_account_id=$(obtain_aws_account_id) || return 1
 	kubectl -n kube-system create sa aws-load-balancer-controller
-	kubectl -n kube-system annotate sa/aws-load-balancer-controller eks.amazonaws.com/role-arn=arn:aws:iam::${AWS_ACCOUNT_ID}:role/${CLUSTER_NAME}-aws-load-balancer-controller
+	kubectl -n kube-system annotate sa/aws-load-balancer-controller eks.amazonaws.com/role-arn=arn:aws:iam::${aws_account_id}:role/${CLUSTER_NAME}-aws-load-balancer-controller
 }
 
 install_alb_chart() {
@@ -60,15 +53,13 @@ verify() {
 }
 
 main() {
-	export AWS_ACCOUNT_ID=$1; shift
-	export AWS_REGION=$1; export AWS_DEFAULT_REGION=$1; shift
 	export CLUSTER_NAME=$1; shift
 
-	eks_login
-	create_aws_sa
-	install_alb_chart
-	install_crd_target_group_bindings
-	verify
+	eks_login \
+	&& create_aws_sa \
+	&& install_alb_chart \
+	&& install_crd_target_group_bindings \
+	&& verify
 }
 
 main "$@"
