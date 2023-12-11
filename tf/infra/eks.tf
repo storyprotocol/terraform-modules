@@ -1,3 +1,5 @@
+data "aws_caller_identity" "current" {}
+
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "19.15.3"
@@ -28,16 +30,17 @@ resource "null_resource" "eks" {
   depends_on = [module.eks, module.eks_addons]
 
   triggers = {
+    aws_account_id = data.aws_caller_identity.current.account_id
     cluster_name   = local.cluster_name
   }
 
-  provisioner "local-exec" {
-    command = "${path.module}/../../bin/post-create ${self.triggers.cluster_name}"
-  }
+  # provisioner "local-exec" {
+  #   command = "${path.module}/../../bin/post-create ${self.triggers.aws_account_id} ${self.triggers.cluster_name}"
+  # }
 
-  provisioner "local-exec" {
-    when    = destroy
-    command = "${path.module}/../../bin/before-delete ${self.triggers.cluster_name}"
-  }
+  # provisioner "local-exec" {
+  #   when    = destroy
+  #   command = "${path.module}/../../bin/before-delete ${self.triggers.aws_account_id} ${self.triggers.cluster_name}"
+  # }
 }
 

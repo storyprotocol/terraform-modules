@@ -12,15 +12,9 @@ eks_login() {
 	done
 }
 
-obtain_aws_account_id() {
-	aws sts get-caller-identity | jq .Account -r
-}
-
 create_aws_sa() {
-	local aws_account_id
-	aws_account_id=$(obtain_aws_account_id) || return 1
 	kubectl -n kube-system create sa aws-load-balancer-controller
-	kubectl -n kube-system annotate sa/aws-load-balancer-controller eks.amazonaws.com/role-arn=arn:aws:iam::${aws_account_id}:role/${CLUSTER_NAME}-aws-load-balancer-controller
+	kubectl -n kube-system annotate sa/aws-load-balancer-controller eks.amazonaws.com/role-arn=arn:aws:iam::${AWS_ACCOUNT_ID}:role/${CLUSTER_NAME}-aws-load-balancer-controller
 }
 
 install_alb_chart() {
@@ -53,6 +47,7 @@ verify() {
 }
 
 main() {
+	export AWS_ACCOUNT_ID=$1; shift
 	export CLUSTER_NAME=$1; shift
 
 	eks_login \
