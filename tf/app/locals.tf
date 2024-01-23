@@ -20,5 +20,7 @@ locals {
 
   s3 = var.params.s3
   db = var.params.db
+
+  cluster_name               = "${var.global.prefix}-eks"
 }
 

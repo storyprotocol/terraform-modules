@@ -17,3 +17,8 @@ variable "params" {
 }
 
 variable "aws_kms_key" {}
+
+variable "cluster_name" {
+  description = "The name of the EKS cluster"
+  type        = string
+}

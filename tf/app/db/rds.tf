@@ -1,6 +1,14 @@
+data "aws_vpc" "selected" {
+  tags = {
+    "Name" = "vpc-${var.cluster_name}"
+  }
+}
+
 resource "aws_security_group" "this" {
+
   name = var.name
 
+  vpc_id = data.aws_vpc.selected.id
   ingress {
     from_port   = var.params.port
     to_port     = var.params.port
@@ -22,8 +30,31 @@ resource "aws_security_group" "this" {
   }
 
   lifecycle {
-    create_before_destroy = true
+    create_before_destroy = false
   }
+}
+
+# Select all private subnets in the VPC
+data "aws_subnets" "private" {
+  filter {
+    name = "vpc-id"
+    values = [data.aws_vpc.selected.id]
+  }
+  tags = {
+    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
+    "kubernetes.io/role/internal-elb"             = 1
+  }
+}
+
+# output "private_subnets"
+output "private_subnets" {
+  value = data.aws_subnets.private.ids
+}
+
+# Create aws_db_subnet_group resource since we are using a custom VPC
+resource "aws_db_subnet_group" "this" {
+  name       = "${var.name}-db-subnet-group"
+  subnet_ids = data.aws_subnets.private.ids
 }
 
 resource "aws_db_instance" "this" {
@@ -41,4 +72,5 @@ resource "aws_db_instance" "this" {
   parameter_group_name          = var.params.parameter_group_name
   vpc_security_group_ids        = [aws_security_group.this.id]
   skip_final_snapshot           = true
+  db_subnet_group_name = aws_db_subnet_group.this.name
 }
