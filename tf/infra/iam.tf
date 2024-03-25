@@ -1,5 +1,5 @@
 resource "aws_iam_policy" "alb" {
-  name = "AWSLoadBalancerControllerIAMPolicy"
+  name = "AWSLoadBalancerControllerIAMPolicy-${local.cluster_name}"
   path = "/"
 
   policy = jsonencode({
