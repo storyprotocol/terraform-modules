@@ -19,6 +19,21 @@ terraform {
       source  = "hashicorp/cloudinit"
       version = "~> 2.3.2"
     }
+
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 2.11"
+    }
+
+    helm = {
+      source  = "hashicorp/helm"
+      version = "~> 2.5"
+    }
+
+    http = {
+      source  = "hashicorp/http"
+      version = "~> 2.1"
+    }
   }
 }
 

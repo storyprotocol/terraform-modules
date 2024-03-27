@@ -3,7 +3,7 @@ module "eks" {
   version = "19.15.3"
 
   cluster_name    = local.cluster_name
-  cluster_version = "1.27"
+  cluster_version = "1.29"
 
   vpc_id                         = module.vpc.vpc_id
   subnet_ids                     = module.vpc.private_subnets
@@ -21,7 +21,8 @@ module "eks_addons" {
 
   eks    = module.eks
   addons = var.params.eks_addons
-
+  region = local.aws_region
+  role_alb = aws_iam_role.alb.arn
 }
 
 resource "null_resource" "eks" {

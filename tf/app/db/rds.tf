@@ -1,7 +1,12 @@
 data "aws_vpc" "selected" {
   tags = {
-    "Name" = "vpc-${var.cluster_name}"
+    Name = "vpc-${var.cluster_name}"
   }
+}
+
+# print out the VPC ID
+output "vpc_id" {
+  value = data.aws_vpc.selected.id
 }
 
 resource "aws_security_group" "this" {
@@ -25,12 +30,20 @@ resource "aws_security_group" "this" {
     ipv6_cidr_blocks = ["::/0"] // >
   }
 
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow all traffic out"
+  }
+
   timeouts {
     delete = "2m"
   }
 
   lifecycle {
-    create_before_destroy = false
+    create_before_destroy = true
   }
 }
 

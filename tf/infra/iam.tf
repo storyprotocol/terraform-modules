@@ -245,8 +245,6 @@ resource "aws_iam_policy" "alb" {
   })
 }
 
-
-
 resource "aws_iam_role" "alb" {
   name = "${local.cluster_name}-${local.cluster_alb_ctrl_saname}"
 
@@ -270,8 +268,16 @@ resource "aws_iam_role" "alb" {
   })
 }
 
+output "alb_iam_policy_arn" {
+  description = "ARN of the IAM policy for the AWS Load Balancer Controller"
+  value = aws_iam_policy.alb.arn
+}
+output "alb_iam_role_arn" {
+  description = "ARN of the IAM role for the AWS Load Balancer Controller"
+  value = aws_iam_role.alb.arn
+}
+
 resource "aws_iam_role_policy_attachment" "alb" {
   role       = aws_iam_role.alb.name
   policy_arn = aws_iam_policy.alb.arn
 }
-
