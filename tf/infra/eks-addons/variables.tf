@@ -7,3 +7,12 @@ variable "addons" {
   default = []
 }
 
+variable "region" {
+  type = string
+  default = ""
+}
+
+variable "role_alb" {
+  type = string
+  default = ""
+}

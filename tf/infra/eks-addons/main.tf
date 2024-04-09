@@ -5,6 +5,7 @@ data "aws_iam_policy" "ebs_csi_policy" {
 
 locals {
   addon_ebs_csi = "ebs_csi"
+  aws_load_balancer_controller = "aws_load_balancer_controller"
 }
 
 module "irsa_ebs_csi" {
@@ -31,4 +32,3 @@ resource "aws_eks_addon" "ebs_csi" {
     "eks_addon" = "ebs-csi"
   }
 }
-
