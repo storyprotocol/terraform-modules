@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Security groups created automatically for ALB are not removed by TF
-# automatically. This script handle the removal of those SGs, required
+# automatically. This script handles the removal of those SGs, required
 # to remove the VPC completely.
 delete_sgs() {
 	# TODO:
